@@ -4,7 +4,7 @@ Decentralized MERN stack application (DApp) designed to provide immutable verifi
 
 **Collaborator:** [RishithaBai263](https://github.com/RishithaBai263)
 
-A special thank you to **RishithaBai** for their crucial contributions to this project. Their dedication to resolving complex environment and dependency conflicts (particularly the Ethers V3/V5 and Pinata SDK issues) was instrumental in stabilizing the backend and ensuring the final deployment of the smart contract. Their tenacious troubleshooting guaranteed the success of the project's foundation.
+A special thank you to **RishithaBai** for her crucial contributions to this project. Her dedication to resolving complex environment and dependency conflicts (particularly the Ethers V3/V5 and Pinata SDK issues) was instrumental in stabilizing the backend and ensuring the final deployment of the smart contract. Her tenacious troubleshooting guaranteed the success of the project's foundation.
 
 ## ✨ Project Features 
 
