@@ -1,10 +1,12 @@
 # 🛡️ College Blockchain Certificate Verification System
 
-A zero-cost, MERN stack decentralized application (DApp) designed to provide immutable verification for academic certificates using the Ethereum Sepolia Testnet and IPFS. This project emphasizes secure, decentralized storage and verifiable data integrity.
+Decentralized MERN stack application (DApp) designed to provide immutable verification for academic certificates using the Ethereum Sepolia Testnet and IPFS. This project emphasizes secure, decentralized storage and verifiable data integrity.
 
 **Collaborator:** [RishithaBai263](https://github.com/RishithaBai263)
 
-## ✨ Project Features (In Plain English)
+A special thank you to **[RishithaBai263]** for their crucial contributions to this project. Their dedication to resolving complex environment and dependency conflicts (particularly the Ethers V3/V5 and Pinata SDK issues) was instrumental in stabilizing the backend and ensuring the final deployment of the smart contract. Their tenacious troubleshooting guaranteed the success of the project's foundation.
+
+## ✨ Project Features 
 
 This system acts as a **digital notary**, making academic certificates impossible to forge and instantly verifiable by employers worldwide.
 
@@ -41,7 +43,7 @@ This system acts as a **digital notary**, making academic certificates impossibl
 
 1.  **Clone Repository:**
     ```bash
-    git clone <YOUR_REPO_URL>
+    git clone https://github.com/MouryaRaviKumar/Decentralized-certificate-verification
     cd <YOUR_PROJECT_NAME>
     ```
 
