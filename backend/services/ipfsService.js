@@ -1,41 +1,69 @@
-// backend/services/ipfsService.js
+// backend/services/ipfsService.js (AXIOS VERSION - FINAL, RELIABLE FIX)
 
-import { Web3Storage, File } from 'web3.storage';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: '../.env' });
+import axios from 'axios';
+import { Readable } from 'stream'; 
+import FormData from 'form-data'; // Need to install this for file uploads
 
-// Initialize the client using the token from the root .env
-const storage = new Web3Storage({ token: process.env.WEB3STORAGE_TOKEN });
-
-/**
- * Converts a file buffer to an array of Web3.Storage File objects.
- * @param {Buffer} buffer The file buffer
- * @param {string} fileName The desired file name
- * @returns {Array<File>} Array of File objects for Web3Storage
- */
-function getFilesFromBuffer(buffer, fileName) {
-  const file = new File([buffer], fileName);
-  return [file];
-}
+// === PRAGMATIC FIX (HARDCODED JWT) ===
+// ⚠️ Your JWT is pasted here to bypass the environment issues.
+const PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJlODhmMjFmNy0xMDYwLTRiNGUtODM5OC1iMDY3ZjExNDQ3YzUiLCJlbWFpbCI6Im1vdXJ5YTc1MzdAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImZhNmQyNTM0ZThjMThmNjIxYWVlIiwic2NvcGVkS2V5U2VjcmV0IjoiMGEwMjFjODJhYzllNWEyYmMwYmU2MmU3ZTExMDAyNGEyMmUxZDYyYzlhZDgyYmU3N2IwYjBhYWRkMGUwZjllMSIsImV4cCI6MTc5MTM3NjgyNH0.dINE6k87O5jMhlqNhN6IIexAftw6c3K0jTfT1qOoF2o"; 
+// =========================================
 
 /**
- * Uploads a file buffer to IPFS via web3.storage.
- * @param {Buffer} fileBuffer The file content as a Buffer
- * @param {string} fileName The name to give the file (e.g., certificate.pdf)
- * @returns {Promise<string>} The Content Identifier (CID) of the uploaded file
+ * Uploads a file buffer to IPFS via Pinata's HTTP API using Axios.
  */
 export const uploadFileToIPFS = async (fileBuffer, fileName) => {
-  try {
-    const files = getFilesFromBuffer(fileBuffer, fileName);
-    console.log(`Uploading ${fileName} to IPFS...`);
     
-    // The client.put method returns the CID of the uploaded content
-    const cid = await storage.put(files); 
-    console.log('IPFS Upload successful. CID:', cid);
+    if (!PINATA_JWT) {
+        throw new Error('Pinata JWT is missing.');
+    }
 
-    return cid;
-  } catch (error) {
-    console.error('Error uploading file to IPFS:', error);
-    throw new Error('IPFS upload failed.');
-  }
+    try {
+        const formData = new FormData();
+        
+        // 1. Convert Buffer to Readable Stream
+        const readableStream = Readable.from(fileBuffer);
+        
+        // 2. Append the file stream to FormData, naming the file 'file' (Pinata requirement)
+        formData.append('file', readableStream, {
+            filename: fileName,
+            contentType: 'application/octet-stream' 
+        });
+
+        // 3. Define the options for Pinata metadata
+        const metadata = JSON.stringify({ name: fileName });
+        formData.append('pinataMetadata', metadata);
+        
+        console.log(`Attempting to upload ${fileName} to IPFS via Axios...`);
+        
+        // 4. Send the request using Axios
+        const response = await axios.post(
+            'https://api.pinata.cloud/pinning/pinFileToIPFS', 
+            formData, 
+            {
+                maxBodyLength: 'Infinity', // Required for large files
+                headers: {
+                    // CRITICAL: Use the JWT in the Authorization header
+                    'Authorization': `Bearer ${PINATA_JWT}`, 
+                    ...formData.getHeaders(), 
+                }
+            }
+        );
+
+        if (response.data && response.data.IpfsHash) {
+            console.log('Pinata Upload successful. CID:', response.data.IpfsHash);
+            return response.data.IpfsHash; 
+        } else {
+            throw new Error(`Pinata did not return a hash. Response: ${JSON.stringify(response.data)}`);
+        }
+
+    } catch (error) {
+        if (error.response) {
+            console.error('Specific Pinata Error:', error.response.status, error.response.data);
+            throw new Error(`IPFS upload failed with Pinata status ${error.response.status}`);
+        } else {
+            console.error('Axios/Network Error:', error.message);
+            throw new Error('IPFS upload failed: Network or stream issue.'); 
+        }
+    }
 };

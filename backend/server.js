@@ -1,10 +1,11 @@
+import * as dotenv from 'dotenv';
+dotenv.config({ path: '../.env' });
 import express from 'express';
 import cors from 'cors';
 import createError from 'http-errors'; 
-import * as dotenv from 'dotenv';
 import connectDB from './config/db.js';
-import userRoutes from './routes/userRoutes.js'; 
-dotenv.config({ path: '../.env' });
+import userRoutes from './routes/userRoutes.js';
+import certificateRoutes from './routes/certificateRoutes.js'; 
 
 connectDB();
 
@@ -17,6 +18,7 @@ app.use(cors());
 
 
 app.use('/api/users', userRoutes); 
+app.use('/api/certificates', certificateRoutes);
 
 
 app.get('/', (req, res) => {
