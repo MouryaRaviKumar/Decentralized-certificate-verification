@@ -6,6 +6,7 @@ import createError from 'http-errors';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
 import certificateRoutes from './routes/certificateRoutes.js'; 
+import contractRoutes from './routes/contractRoutes.js';
 
 connectDB();
 
@@ -19,7 +20,7 @@ app.use(cors());
 
 app.use('/api/users', userRoutes); 
 app.use('/api/certificates', certificateRoutes);
-
+app.use('/api/contract', contractRoutes);
 
 app.get('/', (req, res) => {
   res.send('Certificate Verification System Backend API is running...');
