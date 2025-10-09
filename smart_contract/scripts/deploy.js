@@ -1,7 +1,5 @@
-// smart_contract/scripts/deploy.js (COMMONJS / Hardhat V2)
 
-// Accessing the runtime environment via global variable 'ethers' (V2 standard)
-const { ethers } = require("hardhat"); // Uses require()
+const { ethers } = require("hardhat");
 
 async function main() {
   const [deployer] = await ethers.getSigners(); 
@@ -12,11 +10,10 @@ async function main() {
   const CertificateVerifier = await ethers.getContractFactory("CertificateVerifier");
   const certificateVerifier = await CertificateVerifier.deploy();
 
-  await certificateVerifier.deployed(); // V2 syntax is .deployed()
+  await certificateVerifier.deployed();
 
   console.log("CertificateVerifier deployed to:", certificateVerifier.address);
 
-  // === Test the RBAC setup and new function ===
   const issuerRole = await certificateVerifier.ISSUER_ROLE();
   const isAdmin = await certificateVerifier.hasRole(certificateVerifier.DEFAULT_ADMIN_ROLE(), deployer.address);
   const isIssuer = await certificateVerifier.hasRole(issuerRole, deployer.address);
@@ -24,9 +21,8 @@ async function main() {
   console.log(`Deployer is Admin: ${isAdmin}`);
   console.log(`Deployer is Issuer: ${isIssuer}`);
 
-  // Test the RBAC protected function (should succeed)
   try {
-      // NOTE: Using a simple numeric ID for V2/Ethers 5 compatibility
+
       await certificateVerifier.issueCertificate("CERT-TEST-999", 999, "QmTxxxTestCIDxxx"); 
       console.log("SUCCESS: issueCertificate call by deployer (Issuer) succeeded.");
   } catch (error) {

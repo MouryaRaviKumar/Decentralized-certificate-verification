@@ -1,5 +1,3 @@
-// backend/models/User.js
-
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
@@ -8,7 +6,7 @@ const userSchema = mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, required: true, default: 'Issuer' }, // Roles: 'Admin', 'Issuer'
+    role: { type: String, required: true, default: 'Issuer' },
   },
   { timestamps: true }
 );
