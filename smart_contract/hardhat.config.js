@@ -1,7 +1,5 @@
-// smart_contract/hardhat.config.js (COMMONJS / Hardhat V2)
-
 require("@nomiclabs/hardhat-waffle");
-require("dotenv").config({ path: "../.env" }); // Uses require()
+require("dotenv").config({ path: "../.env" });
 
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
@@ -11,7 +9,6 @@ module.exports = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {
-      // Hardhat V2 uses implicit config
     },
     sepolia: {
       url: SEPOLIA_RPC_URL,
@@ -23,7 +20,6 @@ module.exports = {
     sources: "./contracts",
     tests: "./test",
     cache: "./cache",
-    // CRITICAL: Saves contract ABI and bytecode to the frontend folder
     artifacts: "../frontend/src/artifacts", 
   },
 };
