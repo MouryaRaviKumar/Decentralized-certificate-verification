@@ -1,17 +1,9 @@
-// backend/services/ipfsService.js (AXIOS VERSION - FINAL, RELIABLE FIX)
-
 import axios from 'axios';
 import { Readable } from 'stream'; 
-import FormData from 'form-data'; // Need to install this for file uploads
+import FormData from 'form-data';
 
-// === PRAGMATIC FIX (HARDCODED JWT) ===
-// ⚠️ Your JWT is pasted here to bypass the environment issues.
 const PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJlODhmMjFmNy0xMDYwLTRiNGUtODM5OC1iMDY3ZjExNDQ3YzUiLCJlbWFpbCI6Im1vdXJ5YTc1MzdAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImZhNmQyNTM0ZThjMThmNjIxYWVlIiwic2NvcGVkS2V5U2VjcmV0IjoiMGEwMjFjODJhYzllNWEyYmMwYmU2MmU3ZTExMDAyNGEyMmUxZDYyYzlhZDgyYmU3N2IwYjBhYWRkMGUwZjllMSIsImV4cCI6MTc5MTM3NjgyNH0.dINE6k87O5jMhlqNhN6IIexAftw6c3K0jTfT1qOoF2o"; 
-// =========================================
 
-/**
- * Uploads a file buffer to IPFS via Pinata's HTTP API using Axios.
- */
 export const uploadFileToIPFS = async (fileBuffer, fileName) => {
     
     if (!PINATA_JWT) {
@@ -20,30 +12,26 @@ export const uploadFileToIPFS = async (fileBuffer, fileName) => {
 
     try {
         const formData = new FormData();
-        
-        // 1. Convert Buffer to Readable Stream
+
         const readableStream = Readable.from(fileBuffer);
         
-        // 2. Append the file stream to FormData, naming the file 'file' (Pinata requirement)
         formData.append('file', readableStream, {
             filename: fileName,
             contentType: 'application/octet-stream' 
         });
 
-        // 3. Define the options for Pinata metadata
+
         const metadata = JSON.stringify({ name: fileName });
         formData.append('pinataMetadata', metadata);
         
         console.log(`Attempting to upload ${fileName} to IPFS via Axios...`);
-        
-        // 4. Send the request using Axios
+
         const response = await axios.post(
             'https://api.pinata.cloud/pinning/pinFileToIPFS', 
             formData, 
             {
-                maxBodyLength: 'Infinity', // Required for large files
+                maxBodyLength: 'Infinity',
                 headers: {
-                    // CRITICAL: Use the JWT in the Authorization header
                     'Authorization': `Bearer ${PINATA_JWT}`, 
                     ...formData.getHeaders(), 
                 }

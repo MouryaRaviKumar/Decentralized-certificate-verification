@@ -1,4 +1,3 @@
-// backend/test_pinata.js
 import fetch from 'node-fetch';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: '../.env' }); 
