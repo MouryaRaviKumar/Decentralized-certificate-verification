@@ -12,7 +12,7 @@ contract CertificateVerifier is AccessControl {
 
     struct Certificate {
         uint256 studentId;
-        string certificateCID; // The IPFS Content Identifier (Hash)
+        string certificateCID;
         address issuer;
         uint256 timestamp;
     }
